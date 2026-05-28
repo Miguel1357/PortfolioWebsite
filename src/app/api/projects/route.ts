@@ -15,6 +15,9 @@ export async function POST(req: Request) {
     data: {
       title: body.title,
       description: body.description,
+      github_url: body.github_url,
+      live_url: body.live_url,
+      created_at: body.created_at,
     },
   });
 
