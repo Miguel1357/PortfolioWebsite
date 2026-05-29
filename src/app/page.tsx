@@ -4,21 +4,20 @@ import type { Education } from "@/types/education";
 import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const getData = async (endpoint: string) => {
-    try {
-      const res = await fetch(endpoint, { cache: "no-store" });
+    const res = await fetch(endpoint, {
+      cache: "no-store",
+    });
 
-      if (!res.ok) {
-        console.log("FAILED:", endpoint, res.status);
-        return [];
-      }
-
-      return await res.json();
-    } catch (err) {
-      console.log("ERROR:", endpoint, err);
+    if (!res.ok) {
+      console.log("FAILED:", endpoint, res.status);
       return [];
     }
+
+    return res.json();
   };
 
   const [profile, education, experience, projects] = await Promise.all([
