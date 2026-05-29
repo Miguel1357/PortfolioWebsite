@@ -5,21 +5,44 @@ import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
 export default async function Home() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+
+  const getData = async (endpoint: string) => {
+    try {
+      const url = `${baseUrl}${endpoint}`;
+
+      const res = await fetch(url, {
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("API FAILED:", url, res.status, text);
+        return [];
+      }
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType?.includes("application/json")) {
+        const text = await res.text();
+        console.error("NON-JSON RESPONSE:", url, text);
+        return [];
+      }
+
+      return await res.json();
+    } catch (err) {
+      console.error("FETCH ERROR:", endpoint, err);
+      return [];
+    }
+  };
 
   const [profile, education, experience, projects] = await Promise.all([
-    fetch(`${baseUrl}/api/profile`, { cache: "no-store" }).then((r) =>
-      r.json(),
-    ),
-    fetch(`${baseUrl}/api/education`, { cache: "no-store" }).then((r) =>
-      r.json(),
-    ),
-    fetch(`${baseUrl}/api/experience`, { cache: "no-store" }).then((r) =>
-      r.json(),
-    ),
-    fetch(`${baseUrl}/api/projects`, { cache: "no-store" }).then((r) =>
-      r.json(),
-    ),
+    getData("/api/profile"),
+    getData("/api/education"),
+    getData("/api/experience"),
+    getData("/api/projects"),
   ]);
 
   return (
