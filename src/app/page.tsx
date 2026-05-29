@@ -39,6 +39,11 @@ export default async function Home() {
     getData("/api/projects"),
   ]);
 
+  console.log("PROFILE:", profile);
+  console.log("EDUCATION:", education);
+  console.log("EXPERIENCE:", experience);
+  console.log("PROJECTS:", projects);
+
   return (
     <main className="min-h-screen px-8 py-16 space-y-20">
       <section className="text-center">
