@@ -6,15 +6,10 @@ import type { Education } from "@/types/education";
 import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
-async function getBaseUrl() {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return "http://localhost:3000";
-}
-
 export default async function Home() {
-  const baseUrl = await getBaseUrl();
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
 
   const getData = async (endpoint: string) => {
     try {
@@ -24,15 +19,15 @@ export default async function Home() {
 
       const text = await res.text();
 
-      // IMPORTANT DEBUG (this will reveal hidden HTML errors)
       try {
         return JSON.parse(text);
       } catch {
-        console.error("NON-JSON RESPONSE:", endpoint, text.slice(0, 200));
+        console.error("X NON-JSON RESPONSE:", endpoint);
+        console.error(text.slice(0, 300));
         return [];
       }
     } catch (err) {
-      console.error("FETCH FAILED:", endpoint, err);
+      console.error("X FETCH FAILED:", endpoint, err);
       return [];
     }
   };
