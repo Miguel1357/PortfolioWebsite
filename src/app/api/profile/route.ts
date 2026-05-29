@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  console.log("DATABASE_URL:", process.env.DATABASE_URL);
   const profile = await prisma.profile.findMany();
   return NextResponse.json(profile);
 }

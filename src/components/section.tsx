@@ -11,7 +11,7 @@ export default function Section<T>({
 }: SectionProps<T>) {
   return (
     <section>
-      <h2 className="text-2xl fond-semibold mb-6">{title}</h2>
+      <h2 className="text-2xl font-semibold mb-6">{title}</h2>
 
       <div className="grid gap-4 md:grid-cols-2">
         {data.map((item: any) => (
