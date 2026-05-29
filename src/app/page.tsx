@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 import Section from "@/components/section";
 import type { Profile } from "@/types/profile";
@@ -7,6 +8,7 @@ import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
 export default async function Home() {
+  // ✅ safe Vercel + local base URL
   const baseUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000";
@@ -17,17 +19,20 @@ export default async function Home() {
         cache: "no-store",
       });
 
-      const text = await res.text();
-
-      try {
-        return JSON.parse(text);
-      } catch {
-        console.error("X NON-JSON RESPONSE:", endpoint);
-        console.error(text.slice(0, 300));
+      if (!res.ok) {
+        const text = await res.text();
+        console.error(`❌ ${endpoint} FAILED:`, res.status, text.slice(0, 200));
         return [];
       }
+
+      const data = await res.json();
+
+      // optional debug
+      console.log(`✅ ${endpoint}:`, data);
+
+      return data;
     } catch (err) {
-      console.error("X FETCH FAILED:", endpoint, err);
+      console.error(`❌ FETCH ERROR ${endpoint}:`, err);
       return [];
     }
   };
@@ -38,11 +43,6 @@ export default async function Home() {
     getData("/api/experience"),
     getData("/api/projects"),
   ]);
-
-  console.log("PROFILE:", profile);
-  console.log("EDUCATION:", education);
-  console.log("EXPERIENCE:", experience);
-  console.log("PROJECTS:", projects);
 
   return (
     <main className="min-h-screen px-8 py-16 space-y-20">
