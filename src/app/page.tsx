@@ -5,24 +5,16 @@ import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
 export default async function Home() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
   const getData = async (endpoint: string) => {
-    const res = await fetch(`${baseUrl}${endpoint}`, {
+    const res = await fetch(endpoint, {
       cache: "no-store",
     });
 
     if (!res.ok) {
-      console.error(`Failed to fetch ${endpoint}`);
-      return [];
+      throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
     }
 
-    try {
-      return await res.json();
-    } catch (e) {
-      console.error(`Invalid JSON from ${endpoint}`);
-      return [];
-    }
+    return res.json();
   };
 
   const [profile, education, experience, projects] = await Promise.all([
