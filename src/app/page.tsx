@@ -6,15 +6,19 @@ import type { Projects } from "@/types/projects";
 
 export default async function Home() {
   const getData = async (endpoint: string) => {
-    const res = await fetch(endpoint, {
-      cache: "no-store",
-    });
+    try {
+      const res = await fetch(endpoint, { cache: "no-store" });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+      if (!res.ok) {
+        console.log("FAILED:", endpoint, res.status);
+        return [];
+      }
+
+      return await res.json();
+    } catch (err) {
+      console.log("ERROR:", endpoint, err);
+      return [];
     }
-
-    return res.json();
   };
 
   const [profile, education, experience, projects] = await Promise.all([
