@@ -1,19 +1,23 @@
 export const dynamic = "force-dynamic";
 
 import Section from "@/components/section";
+import { headers } from "next/headers";
+
 import type { Profile } from "@/types/profile";
 import type { Education } from "@/types/education";
 import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
 export default async function Home() {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  const headersList = await headers();
+  const host = headersList.get("host");
+
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = `${protocol}://${host}`;
 
   const getData = async (endpoint: string) => {
     try {
-      const res = await fetch(`${baseUrl}${endpoint}`, {
+      const res = await fetch(new URL(endpoint, baseUrl), {
         cache: "no-store",
       });
 
