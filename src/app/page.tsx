@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 import Section from "@/components/section";
 import type { Profile } from "@/types/profile";
@@ -8,31 +9,30 @@ import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
 export default async function Home() {
-  // ✅ safe Vercel + local base URL
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const getData = async (endpoint: string) => {
     try {
       const res = await fetch(`${baseUrl}${endpoint}`, {
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) {
         const text = await res.text();
-        console.error(`❌ ${endpoint} FAILED:`, res.status, text.slice(0, 200));
+        console.error(`X ${endpoint} FAILED:`, res.status, text.slice(0, 200));
         return [];
       }
 
       const data = await res.json();
 
-      // optional debug
-      console.log(`✅ ${endpoint}:`, data);
+      console.log(`O ${endpoint}:`, data);
 
       return data;
     } catch (err) {
-      console.error(`❌ FETCH ERROR ${endpoint}:`, err);
+      console.error(`X FETCH ERROR ${endpoint}:`, err);
       return [];
     }
   };
