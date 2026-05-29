@@ -8,24 +8,26 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const getData = async (endpoint: string) => {
-    const res = await fetch(endpoint, {
-      cache: "no-store",
-    });
+    try {
+      const res = await fetch(endpoint, { cache: "no-store" });
 
-    if (!res.ok) {
-      console.log("FAILED:", endpoint, res.status);
+      if (!res.ok) {
+        const text = await res.text();
+        console.log("FAILED:", endpoint, res.status, text);
+        return [];
+      }
+
+      return await res.json();
+    } catch (err) {
+      console.log("CRASH:", endpoint, err);
       return [];
     }
-
-    return res.json();
   };
 
-  const [profile, education, experience, projects] = await Promise.all([
-    getData("/api/profile"),
-    getData("/api/education"),
-    getData("/api/experience"),
-    getData("/api/projects"),
-  ]);
+  const profile = await getData("/api/profile");
+  const education = await getData("/api/education");
+  const experience = await getData("/api/experience");
+  const projects = await getData("/api/projects");
 
   return (
     <main className="min-h-screen px-8 py-16 space-y-20">
