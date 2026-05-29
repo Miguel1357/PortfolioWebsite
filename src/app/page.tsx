@@ -1,35 +1,38 @@
 export const dynamic = "force-dynamic";
 
 import Section from "@/components/section";
-import { headers } from "next/headers";
-
 import type { Profile } from "@/types/profile";
 import type { Education } from "@/types/education";
 import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
-export default async function Home() {
-  const headersList = await headers();
-  const host = headersList.get("host");
+async function getBaseUrl() {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "http://localhost:3000";
+}
 
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const baseUrl = `${protocol}://${host}`;
+export default async function Home() {
+  const baseUrl = await getBaseUrl();
 
   const getData = async (endpoint: string) => {
     try {
-      const res = await fetch(new URL(endpoint, baseUrl), {
+      const res = await fetch(`${baseUrl}${endpoint}`, {
         cache: "no-store",
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("FAILED:", endpoint, res.status, text);
+      const text = await res.text();
+
+      // IMPORTANT DEBUG (this will reveal hidden HTML errors)
+      try {
+        return JSON.parse(text);
+      } catch {
+        console.error("NON-JSON RESPONSE:", endpoint, text.slice(0, 200));
         return [];
       }
-
-      return await res.json();
     } catch (err) {
-      console.error("ERROR:", endpoint, err);
+      console.error("FETCH FAILED:", endpoint, err);
       return [];
     }
   };
