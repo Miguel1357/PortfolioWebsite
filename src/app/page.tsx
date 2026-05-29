@@ -4,35 +4,23 @@ import type { Education } from "@/types/education";
 import type { Experience } from "@/types/experience";
 import type { Projects } from "@/types/projects";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
-  const getData = async (endpoint: string) => {
-    try {
-      const res = await fetch(endpoint, { cache: "no-store" });
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.log("FAILED:", endpoint, res.status, text);
-        return [];
-      }
-
-      return await res.json();
-    } catch (err) {
-      console.log("CRASH:", endpoint, err);
-      return [];
-    }
-  };
-
-  const profile = await getData("/api/profile");
-  const education = await getData("/api/education");
-  const experience = await getData("/api/experience");
-  const projects = await getData("/api/projects");
-
-  console.log("PROFILE:", profile);
-  console.log("EDUCATION:", education);
-  console.log("EXPERIENCE:", experience);
-  console.log("PROJECTS:", projects);
+  const [profile, education, experience, projects] = await Promise.all([
+    fetch(`${baseUrl}/api/profile`, { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+    fetch(`${baseUrl}/api/education`, { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+    fetch(`${baseUrl}/api/experience`, { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+    fetch(`${baseUrl}/api/projects`, { cache: "no-store" }).then((r) =>
+      r.json(),
+    ),
+  ]);
 
   return (
     <main className="min-h-screen px-8 py-16 space-y-20">
