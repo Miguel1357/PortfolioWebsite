@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Section from "@/components/section";
 import type { Profile } from "@/types/profile";
 import type { Education } from "@/types/education";
@@ -12,28 +14,19 @@ export default async function Home() {
 
   const getData = async (endpoint: string) => {
     try {
-      const url = `${baseUrl}${endpoint}`;
-
-      const res = await fetch(url, {
+      const res = await fetch(`${baseUrl}${endpoint}`, {
         cache: "no-store",
       });
 
       if (!res.ok) {
         const text = await res.text();
-        console.error("API FAILED:", url, res.status, text);
-        return [];
-      }
-
-      const contentType = res.headers.get("content-type");
-      if (!contentType?.includes("application/json")) {
-        const text = await res.text();
-        console.error("NON-JSON RESPONSE:", url, text);
+        console.error("FAILED:", endpoint, res.status, text);
         return [];
       }
 
       return await res.json();
     } catch (err) {
-      console.error("FETCH ERROR:", endpoint, err);
+      console.error("ERROR:", endpoint, err);
       return [];
     }
   };
