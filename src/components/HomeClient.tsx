@@ -58,7 +58,7 @@ export default function HomeClient() {
     <main className="min-h-screen px-8 py-16 space-y-20">
       <section className="text-center">
         <h1 className="text-4xl font-bold">Miguel Lopez</h1>
-        <p className="mt-4 text-lg">Software Engineer</p>
+        <p className="mt-4 text-lg">Aspiring Software Engineer</p>
       </section>
 
       <Section<Profile>
@@ -109,7 +109,7 @@ export default function HomeClient() {
         data={projects}
         renderItem={(p) => (
           <>
-            <h3 className="text-xl font-bold">{p.title}</h3>
+            <h3 className="text-xl font-bold">{p.project_name}</h3>
             <p className="mt-2 text-gray-600">{p.description}</p>
 
             <div className="mt-4 flex gap-4">

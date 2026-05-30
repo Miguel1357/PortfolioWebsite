@@ -1,6 +1,6 @@
 export type Projects = {
   id: number;
-  title: string;
+  project_name: string;
   description: string;
   github_url: string;
   live_url: string;

@@ -39,7 +39,7 @@ model Experience {
 
 model Project {
   id              Int    @id @default(autoincrement())
-  title           String
+  project_name    String
   description     String
   github_url      String
   live_url        String
